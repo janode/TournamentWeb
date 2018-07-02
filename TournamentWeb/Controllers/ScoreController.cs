@@ -9,6 +9,7 @@ namespace TournamentWeb.Controllers
         [Authorize]
         public async Task<IActionResult> Process()
         {
+            ViewData["test"] = System.IO.Directory.Exists("Leagues");
             return View();
         }
     }

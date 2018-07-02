@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TournamentWeb</title>
+    <title>TournamentWeb</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -26,17 +26,16 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">TournamentWeb</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Score sync</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Download">Download</a></li>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li><a asp-area="" asp-controller="Home" asp-action="Logout">Logout</a></li>
+                        <text>|</text> <li><a asp-area="">@User.Identity.Name</a></li>
                     }
-                    <li><a asp-area="">@User.Identity.Name</a></li>
+
                 </ul>
             </div>
         </div>
@@ -44,10 +43,6 @@
 
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2018 - TournamentWeb</p>
-        </footer>
     </div>
 
     <environment include="Development">

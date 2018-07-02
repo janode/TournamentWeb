@@ -36,6 +36,11 @@ namespace TournamentWeb
                     options.CallbackPath = new PathString("/signin-google");
                     options.SignInScheme = IdentityConstants.ExternalScheme;
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("JanOnly", policy => policy.RequireUserName("Jan Ødegård"));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

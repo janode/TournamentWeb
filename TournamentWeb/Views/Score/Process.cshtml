@@ -1,1 +1,16 @@
-﻿<h2>@ViewData["test"]</h2>
+﻿<h3>@ViewData["Status"]</h3>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <h3>@ViewData["Status"]</h3>
+    @Html.ActionLink("Download files from Dropbox", "Download", "Home", null, new { @class = "btn btn-default", style = "margin-right: 5px;" })
+
+    @Html.ActionLink("Process score", "Process", "Score", null, new { @class = "btn btn-default" })
+}
+else
+{
+    <h3>Login to continue</h3>
+    @Html.ActionLink("Login", "Login", "Home", null, new { @class = "btn btn-default" })
+}
+<br /><br />
+<pre>@ViewData["Log"]</pre>

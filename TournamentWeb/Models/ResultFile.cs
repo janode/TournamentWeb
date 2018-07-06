@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Dropbox.Api;
+using Dropbox.Api.Files;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace TournamentWeb.Models
 {
     public class ResultFile
     {
-        public static string Create(List<UserScore> scoresForAllUsers, string resultsDirectory)
+        public string Create(List<UserScore> scoresForAllUsers, string resultsDirectory, IConfiguration configuration)
         {
             var resultFilePath = $"{resultsDirectory}\\Resultat_{DateTime.Now:dd_MM_yyyy}.json";
 
@@ -40,6 +43,15 @@ namespace TournamentWeb.Models
             var json = JsonConvert.SerializeObject(scores.ToArray());
 
             File.WriteAllText(resultFilePath, json);
+
+            using (var fileStream = File.Open(resultFilePath, FileMode.Open))
+            {
+                using (var dropboxClient = new DropboxClient(configuration["Dropbox:AccessToken"]))
+                {
+                    var remotePath = resultFilePath.Replace(@"\", @"/").Replace("Leagues", "");
+                    dropboxClient.Files.UploadAsync(remotePath, body: fileStream).GetAwaiter().GetResult();
+                }
+            }
 
             return json;
         }

@@ -1,6 +1,4 @@
-﻿<h3>@ViewData["Status"]</h3>
-
-@if (User.Identity.IsAuthenticated)
+﻿@if (User.Identity.IsAuthenticated)
 {
     <h3>@ViewData["Status"]</h3>
     @Html.ActionLink("Download files from Dropbox", "Download", "Home", null, new { @class = "btn btn-default", style = "margin-right: 5px;" })

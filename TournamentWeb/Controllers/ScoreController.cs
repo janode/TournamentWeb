@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
 using TournamentWeb.ExcelReaders;
 using TournamentWeb.Models;
@@ -17,7 +18,13 @@ namespace TournamentWeb.Controllers
     [Authorize(Policy = "JanOnly")]
     public class ScoreController : Controller
     {
+        private readonly IConfiguration _configuration;
         private const string FilePrefix = "VM2018";
+
+        public ScoreController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         [Authorize]
         public IActionResult Process()
@@ -36,7 +43,7 @@ namespace TournamentWeb.Controllers
             return View();
         }
 
-        private static string Calculate(string sourcePath, string leaguePath)
+        private string Calculate(string sourcePath, string leaguePath)
         {
             var fasitFile = Path.Combine(sourcePath, "Fasit.xlsx");
             var sourceDirctory = Path.Combine(leaguePath, "Tippeforslag");
@@ -56,7 +63,7 @@ namespace TournamentWeb.Controllers
             foreach (var participant in Directory.GetFiles(sourceDirctory, "*.xlsx*"))
                 AddParticipantScore(participant, correctResultsWorksheet, tablePosistions, results, sourceDirctory, scoresForAllUsers);
 
-            var json = ResultFile.Create(scoresForAllUsers, resultsDirectory);
+            var json = new ResultFile().Create(scoresForAllUsers, resultsDirectory, _configuration);
 
             // reset old culture info
             Thread.CurrentThread.CurrentCulture = currentCulture;

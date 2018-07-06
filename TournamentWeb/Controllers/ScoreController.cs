@@ -4,6 +4,8 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +29,20 @@ namespace TournamentWeb.Controllers
         }
 
         [Authorize]
+        public IActionResult Simulate()
+        {
+            RunCalculation(false);
+            return View("Process");
+        }
+
+        [Authorize]
         public IActionResult Process()
+        {
+            RunCalculation(true);
+            return View();
+        }
+
+        public void RunCalculation(bool upload)
         {
             FakeConsole.Init();
             var sourceDirectory = "Leagues";
@@ -35,12 +50,23 @@ namespace TournamentWeb.Controllers
             {
                 FakeConsole.WriteLine($"Processing league {Path.GetFileName(league)}");
                 var results = Calculate(sourceDirectory, league);
-                //UploadResults(configuration["Tournament:Upload"], results, Path.GetFileName(league));
+
+                if (upload)
+                    UploadResults(_configuration["Tournament:Upload"], results, Path.GetFileName(league));
             }
 
             ViewData["Status"] = "Results updated";
             ViewData["Log"] = FakeConsole.Print();
-            return View();
+        }
+
+        private static void UploadResults(string uploadPath, string results, string leagueName)
+        {
+            var client = new HttpClient();
+            var response = client
+                .PostAsync(string.Format(uploadPath, FilePrefix, leagueName),
+                    new StringContent(results, Encoding.UTF8, "application/json")).Result;
+
+            FakeConsole.WriteLine(response.Content.ReadAsStringAsync().Result);
         }
 
         private string Calculate(string sourcePath, string leaguePath)

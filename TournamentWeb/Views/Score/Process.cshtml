@@ -2,7 +2,7 @@
 {
     <h3>@ViewData["Status"]</h3>
     @Html.ActionLink("Download files from Dropbox", "Download", "Home", null, new { @class = "btn btn-default", style = "margin-right: 5px;" })
-
+    @Html.ActionLink("Simulate score", "Simulate", "Score", null, new { @class = "btn btn-default", style = "margin-right: 5px;" })
     @Html.ActionLink("Process score", "Process", "Score", null, new { @class = "btn btn-default" })
 }
 else
